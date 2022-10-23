@@ -7,5 +7,5 @@ sample_folders = [
     '~/Desktop/stuff/music/stems/arca/textures'
 ]
 
-segment_csv = '~/Desktop/stuff/tidal/segments_new.csv'
+segment_csv = '~/Desktop/stuff/tidal/segments220917.csv'
 
