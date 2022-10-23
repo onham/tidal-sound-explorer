@@ -43,7 +43,7 @@ def send_message_to_tidal(message_dict):
     else:
         idx = np.random.choice(filt_idx)
 
-    print(f'Playing smaple {df.iloc[idx]["seg_sound"]}, '
+    print(f'***** PLAYING SAMPLE :: {df.iloc[idx]["seg_sound"]}, '
           f'{df.iloc[idx]["seg_number_in_sample"]}, '
           f'cycle - {message_dict["cycle"]}')
     message_list = [

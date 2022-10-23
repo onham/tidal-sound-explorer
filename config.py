@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 sample_folders = [
-    #'/Users/shai/Library/Application Support/SuperCollider/downloaded-quarks/Dirt-Samples',
-    #'/Users/shai/Documents/tidal/sounds/samples-yt',
-    #'/Users/shai/Documents/tidal/sounds/samples-extra',
-    '~/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples'
+    '~/Desktop/stuff/music/Sophie Samples',
+    '~/Desktop/stuff/tidal/spicule/extra-samples',
+    '~/Library/Application Support/SuperCollider/downloaded-quarks/Dirt-Samples',
+    '~/Desktop/stuff/music/stems/arca/textures'
 ]
 
-segment_csv = '~/Documents/tidal/segments.csv'
+segment_csv = '~/Desktop/stuff/tidal/segments_new.csv'
 

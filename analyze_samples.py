@@ -228,7 +228,7 @@ def main():
     df = gen_seg_df(samples_dict)
     df = add_embeddings(df, run_umap=False)
     df.to_csv(utils.segment_csv_path())
-    # gen_haskell_code(df, '/Users/shai/Documents/tidal/segments.hs')
+    # gen_haskell_code(df, '~/Desktop/stuff/tidal/segments.hs')
 
 
 if __name__ == '__main__':

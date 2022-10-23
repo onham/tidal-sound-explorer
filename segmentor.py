@@ -35,11 +35,9 @@ def download_youtube_audio(youtube_id: str, sample_name: str, target_folder: Pat
 
 
 if __name__ == '__main__':
-    samples_path = Path('/Users/shai/Documents/tidal/sounds/samples-yt/')
+    samples_path = Path('~/Desktop/stuff/music/stems/')
 
-    # track = AudioSegment.from_file('~/Documents/tidal/sounds/samples-extra/yt/sophie1.wav')
-    # track = AudioSegment.from_file("/Users/shai/Documents/tidal/sounds/samples-extra/yt/sophie1.wav")
-    my_parser = argparse.ArgumentParser(description="Dowload file from youtube and analyze it's audio")
+    my_parser = argparse.ArgumentParser(description="Download file from youtube and analyze it's audio")
 
     my_parser.add_argument('youtube_id',
                            type=str,
