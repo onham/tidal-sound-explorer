@@ -1,6 +1,5 @@
 import json
 import socket
-import sys
 
 import numpy as np
 import pandas as pd
@@ -13,25 +12,18 @@ from utils import load_df
 
 UDP_IP = "127.0.0.1"
 UDP_PORT = 5005
-UDP_PORT_plotter2player = 5006
 MAX_POINTS_IN_QUEUE = 30  # adjust this number if the event rate is too high and the plot gets out of sync
 
 sock = socket.socket(socket.AF_INET,
                      socket.SOCK_DGRAM)
 sock.bind((UDP_IP, UDP_PORT))
 
-sock_plotter2player = socket.socket(socket.AF_INET,
-                     socket.SOCK_DGRAM)
-
 plt.style.use('dark_background')
 
 
 class Scope:
-    def __init__(self, fig, ax, plot_df, dt, init_random_keys=True):
+    def __init__(self, ax, plot_df, dt):
         print("Get ready for some points!!!")
-        plt.rcParams['keymap.xscale'].remove('k')
-        plt.rcParams['keymap.save'].remove('s')
-        self.fig = fig
         self.ax = ax
         self.dt = dt
         self.df = plot_df
@@ -47,20 +39,7 @@ class Scope:
         self.default_size_factor = 100
         self.default_color = 'w'
         self.p = self.ax.scatter([0], [0], visible=False)
-        self.num_text_elements = 20
-        self.texts = [self.ax.text(0, 0, '', color='w') for i in range(self.num_text_elements)]
-        self.poiter_clicked = False
-        self.fig.canvas.mpl_connect('button_press_event', self.on_click)
-        self.fig.canvas.mpl_connect('button_release_event', self.on_release)
-        self.fig.canvas.mpl_connect('motion_notify_event', self.on_motion)
-        self.fig.canvas.mpl_connect('key_press_event', self.on_press)
-        self.selected_key = '1'
-        self.clicked_key_vals = {}
-        if init_random_keys:
-            for key in '0123456789':
-                self.clicked_key_vals[key] = 0.5+np.random.randn()*0.2, 0.5+np.random.randn()*0.2
-        sock_plotter2player.sendto(json.dumps(self.clicked_key_vals).encode('utf-8'), (UDP_IP, UDP_PORT_plotter2player))
-
+        # print(type(self.p))
 
     def update(self, data_dict):
         self.t += self.dt
@@ -99,55 +78,7 @@ class Scope:
             self.points[:, 2] *= 0.9
         else:
             self.p.set_visible(False)
-        for i, (k, v) in enumerate(self.clicked_key_vals.items()):
-            self.texts[i].set_text(k)
-            self.texts[i].set_position(v)
-            self.texts[i].set_color('w')
-            self.texts[i].set_visible(True) 
-        for i in range(len(self.clicked_key_vals), len(self.texts)):
-            self.texts[i].set_visible(False)
-        return self.p, *self.texts
-    
-    def on_motion(self, event):
-        if not self.poiter_clicked:
-            return
-        if len(self.clicked_key_vals) > self.num_text_elements:
-            return
-        # print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
-        #     ('double' if event.dblclick else 'single', event.button,
-        #     event.x, event.y, event.xdata, event.ydata))
-        self.clicked_key_vals[self.selected_key] = event.xdata, event.ydata
-        sock_plotter2player.sendto(json.dumps(self.clicked_key_vals).encode('utf-8'), (UDP_IP, UDP_PORT_plotter2player))
-        # print('*'*40)
-        # print(self.clicked_key_vals)
-        # print('~'*40)
-    
-    def on_click(self, event):
-        if event.button == 1:
-            self.poiter_clicked = True
-            self.clicked_key_vals[self.selected_key] = event.xdata, event.ydata
-            sock_plotter2player.sendto(json.dumps(self.clicked_key_vals).encode('utf-8'), (UDP_IP, UDP_PORT_plotter2player))
-        else:
-            self.poiter_clicked = False
-    
-    def on_release(self, event):
-        if event.button == 1:
-            self.poiter_clicked = False
-
-    def on_press(self, event):
-        if event.key == 'tab':
-            self.clicked_key_vals = {}
-            for t in self.texts:
-                t.set_visible(False)
-            return
-        if event.key == 'backspace':
-            if self.selected_key in self.clicked_key_vals:
-                del self.clicked_key_vals[self.selected_key]
-            return
-        print('press', event.key)
-        self.selected_key = event.key
-        sys.stdout.flush()
-
+        return self.p,
 
 
 def get_updated_val(update_val=None):
@@ -179,11 +110,10 @@ df = load_df()
 interval = 1
 dt_ = interval / 1000
 sock.settimeout(0)
-sock_plotter2player.settimeout(0)
 
-fig_, ax_ = plt.subplots(figsize=(10, 10))
+fig, ax_ = plt.subplots(figsize=(10, 10))
 
-scope = Scope(fig_, ax_, df, dt_)
-ani = animation.FuncAnimation(fig_, scope.update, emitter, interval=interval,
+scope = Scope(ax_, df, dt_)
+ani = animation.FuncAnimation(fig, scope.update, emitter, interval=interval,
                               blit=True)
 plt.show()
